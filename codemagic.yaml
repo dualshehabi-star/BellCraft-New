@@ -1,0 +1,21 @@
+workflows:
+  ios-build:
+    name: Build iOS IPA
+
+    environment:
+      node: 20
+
+    scripts:
+      - npm ci
+      - npm run build
+      - npx cap sync ios
+      - xcodebuild -workspace ios/App/App.xcworkspace \
+          -scheme App \
+          -sdk iphoneos \
+          -configuration Release \
+          archive \
+          -archivePath $CM_BUILD_DIR/App.xcarchive
+
+    artifacts:
+      - build/**/*.ipa
+      - $CM_BUILD_DIR/App.xcarchive
